@@ -1,0 +1,48 @@
+# Rafi Talukder Final Project
+"""---------------------------------------------------------------------------------"""
+from flask import Flask, render_template, request, redirect, url_for, session
+from flask_sqlalchemy import SQLAlchemy
+import requests
+"""---------------------------------------------------------------------------------"""
+app = Flask(__name__)
+app.secret_key = "simplekey"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///book_catalogue.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
+"""---------------------------------DATABASE------------------------------------------------"""
+class Book(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200))
+    author = db.Column(db.String(200))
+    pages = db.Column(db.Integer)
+    rating = db.Column(db.Float)
+    isbn = db.Column(db.String(20))
+
+with app.app_context():
+    db.create_all()
+"""------------------------------------LOGIN---------------------------------------------"""
+USERNAME = "admin"
+PASSWORD = "password"
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+
+@app.route("/logout")
+def logout():
+
+"""-----------------------------------PROTECTED HOME----------------------------------------------"""
+@app.route("/")
+def index():
+
+"""--------------------------------------ADD BOOK-------------------------------------------"""
+@app.route("/add", methods=["GET", "POST"])
+def add():
+
+"""-----------------------------------DELETE----------------------------------------------"""
+@app.route("/delete/<int:id>")
+def delete(id):
+
+"""---------------------------------------------------------------------------------"""
+if __name__ == "__main__":
+    app.run()
