@@ -47,11 +47,39 @@ def index():
 """--------------------------------------ADD BOOK-------------------------------------------"""
 @app.route("/add", methods=["GET", "POST"])
 def add():
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
 
+    if request.method == "POST":
+        isbn = request.form["isbn"]
+        res = requests.get(f"https://www.googleapis.com/books/v1/volumes?q=isbn:{isbn}").json()
+
+        if "items" not in res:
+            return "Book not found."
+
+        info = res["items"][0]["volumeInfo"]
+        new_book = Book(
+            title=info.get("title", "Unknown"),
+            author=", ".join(info.get("authors", ["Unknown"])),
+            pages=info.get("pageCount", 0),
+            rating=info.get("averageRating", 0),
+            isbn=isbn
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        return redirect(url_for("index"))
+
+    return render_template("add.html")
 """-----------------------------------DELETE----------------------------------------------"""
 @app.route("/delete/<int:id>")
 def delete(id):
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
 
+    book = Book.query.get(id)
+    db.session.delete(book)
+    db.session.commit()
+    return redirect(url_for("index"))
 """---------------------------------------------------------------------------------"""
 if __name__ == "__main__":
     app.run()
