@@ -5,7 +5,9 @@
    </head>
    <body>
       <h1>CLASSIFIED BOOK FILES</h1>
-      <a href="/add">Add Entry</a> | <a href="/logout">Logout</a>
+      <p>Logged in as: {{ session['user'] }}</p>
+      <a href="/add">Add Entry</a> |
+      <a href="/logout">Logout</a>
       <br><br>
       {% if books %}
       <table>
@@ -22,7 +24,11 @@
             <td>{{ b.author }}</td>
             <td>{{ b.pages if b.pages else "N/A" }}</td>
             <td>{{ b.rating if b.rating else "N/A" }}</td>
-            <td><a href="/delete/{{b.id}}">X</a></td>
+            <td>
+               <form action="/delete/{{b.id}}" method="GET">
+                  <button class="del-btn">DELETE</button>
+               </form>
+            </td>
          </tr>
          {% endfor %}
       </table>

@@ -9,7 +9,13 @@ app.secret_key = "simplekey"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///book_catalogue.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
-"""---------------------------------DATABASE------------------------------------------------"""
+
+"""---------------------------------DATABASE MODELS---------------------------------"""
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(50))
+
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200))
@@ -20,17 +26,32 @@ class Book(db.Model):
 
 with app.app_context():
     db.create_all()
-"""------------------------------------LOGIN---------------------------------------------"""
-USERNAME = "admin"
-PASSWORD = "password"
 
+    if User.query.count() == 0:
+        default_users = [
+            User(username="admin", password="password"),
+            User(username="rafi", password="python123"),
+            User(username="student", password="pass123")
+        ]
+        db.session.add_all(default_users)
+        db.session.commit()
+
+"""------------------------------------LOGIN---------------------------------------------"""
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        if request.form["username"] == USERNAME and request.form["password"] == PASSWORD:
+        uname = request.form["username"]
+        pwd = request.form["password"]
+
+        user = User.query.filter_by(username=uname, password=pwd).first()
+
+        if user:
             session["logged_in"] = True
+            session["user"] = user.username
             return redirect(url_for("index"))
-        return "Invalid login"
+
+        return "Invalid username or password"
+
     return render_template("login.html")
 
 @app.route("/logout")
