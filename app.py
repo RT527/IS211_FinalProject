@@ -26,15 +26,24 @@ PASSWORD = "password"
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-
+    if request.method == "POST":
+        if request.form["username"] == USERNAME and request.form["password"] == PASSWORD:
+            session["logged_in"] = True
+            return redirect(url_for("index"))
+        return "Invalid login"
+    return render_template("login.html")
 
 @app.route("/logout")
 def logout():
-
+    session.clear()
+    return redirect(url_for("login"))
 """-----------------------------------PROTECTED HOME----------------------------------------------"""
 @app.route("/")
 def index():
-
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
+    books = Book.query.all()
+    return render_template("index.html", books=books)
 """--------------------------------------ADD BOOK-------------------------------------------"""
 @app.route("/add", methods=["GET", "POST"])
 def add():
