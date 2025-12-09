@@ -1,29 +1,33 @@
 <!DOCTYPE html>
 <html>
-<body>
-    <h1>Your Books</h1>
-
-    <a href="/add">Add a Book</a> |
-    <a href="/logout">Logout</a>
-    <br><br>
-
-    {% if books %}
-        <table border="1" cellpadding="5">
-            <tr>
-                <th>Title</th><th>Author</th><th>Pages</th><th>Rating</th><th>Delete</th>
-            </tr>
-        {% for b in books %}
-            <tr>
-                <td>{{ b.title }}</td>
-                <td>{{ b.author }}</td>
-                <td>{{ b.pages if b.pages else "N/A" }}</td>
-                <td>{{ b.rating if b.rating else "N/A" }}</td>
-                <td><a href="/delete/{{ b.id }}">X</a></td>
-            </tr>
-        {% endfor %}
-        </table>
-    {% else %}
-        <p>No books yet.</p>
-    {% endif %}
-</body>
+   <head>
+      <link rel="stylesheet" href="{{url_for('static', filename='styles.css')}}">
+   </head>
+   <body>
+      <h1>CLASSIFIED BOOK FILES</h1>
+      <a href="/add">Add Entry</a> | <a href="/logout">Logout</a>
+      <br><br>
+      {% if books %}
+      <table>
+         <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Pages</th>
+            <th>Rating</th>
+            <th>Delete</th>
+         </tr>
+         {% for b in books %}
+         <tr>
+            <td>{{ b.title }}</td>
+            <td>{{ b.author }}</td>
+            <td>{{ b.pages if b.pages else "N/A" }}</td>
+            <td>{{ b.rating if b.rating else "N/A" }}</td>
+            <td><a href="/delete/{{b.id}}">X</a></td>
+         </tr>
+         {% endfor %}
+      </table>
+      {% else %}
+      <p>No classified entries found.</p>
+      {% endif %}
+   </body>
 </html>
